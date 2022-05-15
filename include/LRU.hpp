@@ -11,12 +11,20 @@ static std::atomic<int> g_Time = 0; //this is like a global timer//lets also add
 typedef int CacheData;
 struct LRU_VALUE
 {
-    uint32_t id;
-    CacheData value;
-    int priority;
-    int timeout;
-    std::list<LRU_VALUE>::iterator it1;
-    std::list<LRU_VALUE>::iterator it2;
+    LRU_VALUE(std::string name, CacheData value, int priority, int expiryInSecs):
+        m_name(name),
+        m_value(value),
+        m_priority(priority),
+        m_timeout(expiryInSecs){};
+
+    std::string m_name;
+    CacheData m_value;
+    int m_priority;
+    int m_timeout;
+
+    std::unordered_map<std::string, std::shared_ptr<LRU_VALUE>>::iterator m_nameIt;
+    std::list<std::shared_ptr<LRU_VALUE>>::iterator m_priorityIt;
+    std::list<std::shared_ptr<LRU_VALUE>>::iterator m_timeoutIt;
 };
 
 typedef std::unordered_map<std::string, std::shared_ptr<LRU_VALUE>> LRU_COMPONENTS_NAME;
@@ -35,7 +43,7 @@ public:
     void EvictItems();
 
 private:
-    unsigned int maxItems;
+    unsigned int m_maxItems;
 
     LRU_COMPONENTS_NAME m_nameLookup;
     LRU_COMPONENTS_PRIORITY m_priorityLookup;
