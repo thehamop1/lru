@@ -33,3 +33,10 @@ For each item Priority, Timeout, Hits
 1. Timeout
 2. if priority
 3. use hits
+
+
+## To-Do
+1. Setup debug and build flags
+2. Setup the eviction rules
+3. Setup the gtest
+4. look into memory pool

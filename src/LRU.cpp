@@ -103,4 +103,5 @@ void PriorityExpiryCache::DebugPrintKeys() {
  */
 void PriorityExpiryCache::EvictItems() {
   if(m_nameLookup.size()<m_maxItems) return;
+
 };
