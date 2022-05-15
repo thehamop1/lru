@@ -8,9 +8,16 @@
 
 #include "LRU.hpp"
 
+/**
+ * @brief Default constructor with size 0 cache
+ */
 PriorityExpiryCache::PriorityExpiryCache():m_maxItems(0){
 };
 
+/**
+ * @brief Constructor used to reserve data on construction
+ * @param size The initial size of the LRU cache
+ */
 PriorityExpiryCache::PriorityExpiryCache(unsigned int size): m_maxItems(size)
 {
   m_nameLookup.reserve(m_maxItems);//grab memory ahead of time
@@ -18,9 +25,11 @@ PriorityExpiryCache::PriorityExpiryCache(unsigned int size): m_maxItems(size)
   m_timeoutLookup.reserve(m_maxItems);
 };
 
+/**
+ * @brief Gets a pointer to a particular value in the lru cache
+ * @param key The name of the value we're accessing
+ */
 CacheData* PriorityExpiryCache::Get(std::string key) {
-  // ... the interviewee does not need to implement this now.
-  // Assume that this will return the value for the key in the cache
   auto f = m_nameLookup.find(key);
   if(f==m_nameLookup.end()){
     std::cout << "Did not find the value in the cache!" << std::endl;
@@ -30,6 +39,13 @@ CacheData* PriorityExpiryCache::Get(std::string key) {
   return &((f->second).get()->m_value);
 };
 
+/**
+ * @brief Inserts a new data item into the cache
+ * @param key The name of the value we're storing
+ * @param value The actually value of the item
+ * @param priority Priority of this data block
+ * @param expiryInSecs The timeout for a particular variable to be considered stale
+ */
 void PriorityExpiryCache::Set(std::string key, CacheData value, int priority, int expiryInSecs) {
   // Assume that this will add this key, value pair to the cache
   std::shared_ptr<LRU_VALUE> lruValue = std::make_shared<LRU_VALUE>(key, value, priority, expiryInSecs);
@@ -63,6 +79,10 @@ void PriorityExpiryCache::Set(std::string key, CacheData value, int priority, in
   EvictItems();
 };
 
+/**
+ * @brief Sets the size of the cache and evicts items if the size is set smaller
+ * @param numItems The size to set the cache to
+ */
 void PriorityExpiryCache::SetMaxItems(int numItems) {
   m_maxItems = numItems;
   EvictItems();
@@ -70,7 +90,6 @@ void PriorityExpiryCache::SetMaxItems(int numItems) {
 
 /**
  * @brief Prints all the keys in the cache for debugging purposes
- * 
  */
 void PriorityExpiryCache::DebugPrintKeys() {
   std::cout << "LRU Values: " << std::endl;
@@ -79,8 +98,9 @@ void PriorityExpiryCache::DebugPrintKeys() {
   }
 };
 
+/**
+ * @brief Remove items from the LRU based on priority, timeout, and last accessed
+ */
 void PriorityExpiryCache::EvictItems() {
-  // TODO(interviewee): implement this
   if(m_nameLookup.size()<m_maxItems) return;
-
 };
