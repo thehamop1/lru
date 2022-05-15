@@ -19,13 +19,15 @@ struct LRU_VALUE
     std::list<LRU_VALUE>::iterator it2;
 };
 
-typedef std::unordered_map<std::string, LRU_VALUE> LRU_COMPONENTS_NAME;
+typedef std::unordered_map<std::string, std::shared_ptr<LRU_VALUE>> LRU_COMPONENTS_NAME;
 typedef std::unordered_map<int, std::list<std::shared_ptr<LRU_VALUE>>> LRU_COMPONENTS_PRIORITY;
-typedef std::unordered_map<int, std::list<LRU_VALUE>> LRU_COMPONENTS_TIMEOUT;
+typedef std::unordered_map<int, std::list<std::shared_ptr<LRU_VALUE>>> LRU_COMPONENTS_TIMEOUT;
 
 class PriorityExpiryCache
 { // I'm going to make this a class so we can add scope
 public:
+    PriorityExpiryCache();
+    PriorityExpiryCache(unsigned int size);
     CacheData *Get(std::string key);
     void Set(std::string key, CacheData value, int priority, int expiryInSecs);
     void SetMaxItems(int numItems);
@@ -33,7 +35,7 @@ public:
     void EvictItems();
 
 private:
-    int maxItems;
+    unsigned int maxItems;
 
     LRU_COMPONENTS_NAME m_nameLookup;
     LRU_COMPONENTS_PRIORITY m_priorityLookup;
