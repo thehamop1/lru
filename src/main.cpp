@@ -1,16 +1,16 @@
 #include "LRU.hpp"
 
-int main() {
+int main()
+{
   PriorityExpiryCache c(5);
   // Name, value, priority, seconds
-  c.Set("A", 1, 5,  100 );
-  c.Set("B", 2, 15, 3   );
-  c.Set("C", 3, 5,  10  );
-  c.Set("D", 4, 1,  15  );
-  c.Set("E", 5, 5,  150 );
+  c.Set("A", 1, 5, 100);
+  c.Set("B", 2, 15, 3);
+  c.Set("C", 3, 5, 10);
+  c.Set("D", 4, 1, 15);
+  c.Set("E", 5, 5, 150);
 
-  std::cout << "Value at C: " << *(c.Get("C")) << std::endl;//edited line
-
+  std::cout << "Value at C: " << *(c.Get("C")) << std::endl; // edited line
 
   // Current time = 0
   c.SetMaxItems(5);
@@ -43,6 +43,6 @@ int main() {
   // Keys in C = ["C"]
   // "E" is removed because C is more recently used (due to the Get("C") event).
   c.DebugPrintKeys();
-  
+
   return 0;
 }

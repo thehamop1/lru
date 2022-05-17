@@ -39,16 +39,23 @@ CacheData *PriorityExpiryCache::Get(std::string key)
   }
   auto ptr = f->second;
 
-  auto& timeoutList = m_timeoutLookup.find(ptr->m_timeout)->second;
+  auto &timeoutList = m_timeoutLookup.find(ptr->m_timeout)->second;
   UpdateList(timeoutList, ptr->m_timeoutIt, ptr);
 
-  auto& priorityList = m_priorityLookup.find(ptr->m_priority)->second;
+  auto &priorityList = m_priorityLookup.find(ptr->m_priority)->second;
   UpdateList(priorityList, ptr->m_priorityIt, ptr);
 
   return &(ptr->m_value);
 };
 
-void PriorityExpiryCache::UpdateList(std::list<std::shared_ptr<LRU_VALUE>>& list, std::list<std::shared_ptr<LRU_VALUE>>::iterator& it, std::shared_ptr<LRU_VALUE> ptr){
+/**
+ * @brief Updates a list based on access
+ * @param list The list we're updating
+ * @param it The lru value iterator we need to set
+ * @param ptr The lru value
+ */
+void PriorityExpiryCache::UpdateList(std::list<std::shared_ptr<LRU_VALUE>> &list, std::list<std::shared_ptr<LRU_VALUE>>::iterator &it, std::shared_ptr<LRU_VALUE> ptr)
+{
   list.erase(it);
   auto newPriorityIt = list.insert(list.begin(), ptr);
   it = newPriorityIt;
@@ -74,7 +81,16 @@ void PriorityExpiryCache::Set(std::string key, CacheData value, int priority, in
   EvictItems();
 };
 
-void PriorityExpiryCache::AddToMap(std::map<int, std::list<std::shared_ptr<LRU_VALUE>>>& map,  std::list<std::shared_ptr<LRU_VALUE>>::iterator& it, std::shared_ptr<LRU_VALUE> ptr, int key){
+/**
+ * @brief Adds a new value to the cache if no category for its map is created then create a list. Otherwise
+ * prepend to the list
+ * @param map The map to add the value to
+ * @param it The corresponsing iterator for the list in the maps value
+ * @param ptr A pointer to the lru value
+ * @param key The value of the category (can be priority or timeout epoch)
+ */
+void PriorityExpiryCache::AddToMap(std::map<int, std::list<std::shared_ptr<LRU_VALUE>>> &map, std::list<std::shared_ptr<LRU_VALUE>>::iterator &it, std::shared_ptr<LRU_VALUE> ptr, int key)
+{
   auto category = map.find(key);
   if (category == map.end())
   {
@@ -91,7 +107,6 @@ void PriorityExpiryCache::AddToMap(std::map<int, std::list<std::shared_ptr<LRU_V
     it = listIt;
   }
 };
-
 
 /**
  * @brief Sets the size of the cache and evicts items if the size is set smaller
@@ -125,22 +140,26 @@ void PriorityExpiryCache::EvictItems()
     return;
 
   // iterate over timeout
-  while(m_nameLookup.size()>m_maxItems){
+  while (m_nameLookup.size() > m_maxItems)
+  {
 
     auto firstToExpire = m_timeoutLookup.begin();
-    if (firstToExpire->first > g_Time || firstToExpire==m_timeoutLookup.end()) break;
+    if (firstToExpire->first > g_Time || firstToExpire == m_timeoutLookup.end())
+      break;
 
-    auto& list = firstToExpire->second;
+    auto &list = firstToExpire->second;
     RemoveItem(list.back());
   }
 
   // iterate over priority
-  while(m_nameLookup.size()>m_maxItems){
+  while (m_nameLookup.size() > m_maxItems)
+  {
 
     auto lowestPriority = m_priorityLookup.begin();
-    if (lowestPriority==m_priorityLookup.end()) break;
+    if (lowestPriority == m_priorityLookup.end())
+      break;
 
-    auto& list = lowestPriority->second;
+    auto &list = lowestPriority->second;
     RemoveItem(list.back());
   }
 };

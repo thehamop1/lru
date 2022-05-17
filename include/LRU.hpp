@@ -6,16 +6,13 @@
 #include <memory>
 #include <atomic>
 
-
-
 typedef int CacheData;
 struct LRU_VALUE
 {
-    LRU_VALUE(std::string name, CacheData value, int priority, int expiryInSecs):
-        m_name(name),
-        m_value(value),
-        m_priority(priority),
-        m_timeout(expiryInSecs){};
+    LRU_VALUE(std::string name, CacheData value, int priority, int expiryInSecs) : m_name(name),
+                                                                                   m_value(value),
+                                                                                   m_priority(priority),
+                                                                                   m_timeout(expiryInSecs){};
 
     std::string m_name;
     CacheData m_value;
@@ -42,12 +39,12 @@ public:
     void DebugPrintKeys();
     void EvictItems();
 
-    static int g_Time; //this is like a global timer
+    static int g_Time; // this is like a global timer
 
 private:
     void RemoveItem(std::shared_ptr<LRU_VALUE> item);
-    void UpdateList(std::list<std::shared_ptr<LRU_VALUE>>& list, std::list<std::shared_ptr<LRU_VALUE>>::iterator& it, std::shared_ptr<LRU_VALUE> ptr);
-    void AddToMap(std::map<int, std::list<std::shared_ptr<LRU_VALUE>>>& map,  std::list<std::shared_ptr<LRU_VALUE>>::iterator& it, std::shared_ptr<LRU_VALUE> ptr, int key);
+    void UpdateList(std::list<std::shared_ptr<LRU_VALUE>> &list, std::list<std::shared_ptr<LRU_VALUE>>::iterator &it, std::shared_ptr<LRU_VALUE> ptr);
+    void AddToMap(std::map<int, std::list<std::shared_ptr<LRU_VALUE>>> &map, std::list<std::shared_ptr<LRU_VALUE>>::iterator &it, std::shared_ptr<LRU_VALUE> ptr, int key);
     unsigned int m_maxItems;
 
     LRU_COMPONENTS_NAME m_nameLookup;
