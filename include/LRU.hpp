@@ -1,3 +1,4 @@
+#pragma once
 #include <iostream>
 #include <unordered_map>
 #include <map>
@@ -5,7 +6,7 @@
 #include <memory>
 #include <atomic>
 
-static std::atomic<int> g_Time = 0; //this is like a global timer//lets also add just a bit of safety to it
+
 
 typedef int CacheData;
 struct LRU_VALUE
@@ -40,6 +41,8 @@ public:
     void SetMaxItems(int numItems);
     void DebugPrintKeys();
     void EvictItems();
+
+    static int g_Time; //this is like a global timer
 
 private:
     void RemoveItem(std::shared_ptr<LRU_VALUE> item);

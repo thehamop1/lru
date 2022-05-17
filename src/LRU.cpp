@@ -8,6 +8,8 @@
 
 #include "LRU.hpp"
 
+int PriorityExpiryCache::g_Time = 0; //this is like a global timer
+
 /**
  * @brief Default constructor with size 0 cache
  */
@@ -103,35 +105,36 @@ void PriorityExpiryCache::DebugPrintKeys() {
  */
 void PriorityExpiryCache::EvictItems() {
   //if we have enough space to hold everything dont evict anything
-  if(m_nameLookup.size()<m_maxItems) return;
+  if(m_nameLookup.size()<=m_maxItems) return;
 
   //iterate over priority but only check the back
 
-  LRU_COMPONENTS_TIMEOUT::reverse_iterator timeoutRiter = m_timeoutLookup.rbegin();
-  while(m_nameLookup.size()>m_maxItems){//while the cache is too big
-    while(timeoutRiter!=m_timeoutLookup.rend()){
-      if(timeoutRiter->second.back()->m_timeout > g_Time){
+  LRU_COMPONENTS_TIMEOUT::iterator timeoutIter = m_timeoutLookup.begin();
+  // while(m_nameLookup.size()>m_maxItems){//while the cache is too big
+    while(timeoutIter!=m_timeoutLookup.end() && m_nameLookup.size()>m_maxItems){
+      std::cout << "List ID: " << timeoutIter->first << "SIZE OF LIST: " << timeoutIter->second.size() << std::endl;
+      if(timeoutIter->second.back()->m_timeout > g_Time){
         break;//start evicting by priority
       }else{
-        
+        std::cout << "removing an item" << std::endl;
+        RemoveItem(timeoutIter->second.back());
       } 
-      timeoutRiter++;
+      timeoutIter++;
     }
-
-
-
-
-  }
-
-
-  // for(auto& it : m_timeoutLookup){
-  //   std::cout << "First: " << it.first << "\tTimeout: " << it.second.back()->m_timeout << std::endl;
-  //   // auto& last accessed = it.second.back();
-  //   // if(g_Time>it)
   // }
-
 };
 
 void PriorityExpiryCache::RemoveItem(std::shared_ptr<LRU_VALUE> item) {
+  int priority = item->m_priority;
+  int timeout = item->m_timeout;
 
+  LRU_COMPONENTS_PRIORITY::iterator priorityIt = m_priorityLookup.find(priority);
+  LRU_COMPONENTS_TIMEOUT::iterator timeoutIt = m_timeoutLookup.find(timeout);
+
+  m_nameLookup.erase(item->m_name);
+  priorityIt->second.erase(item->m_priorityIt);
+  timeoutIt->second.erase(item->m_timeoutIt);
+
+  if(priorityIt->second.empty()) m_priorityLookup.erase(priorityIt);
+  if(timeoutIt->second.empty()) m_timeoutLookup.erase(timeoutIt);
 };
