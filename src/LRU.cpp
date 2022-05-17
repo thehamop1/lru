@@ -38,6 +38,15 @@ CacheData *PriorityExpiryCache::Get(std::string key)
     std::cout << "Did not find the value in the cache!" << std::endl;
     return nullptr;
   }
+  auto& priorityList = m_priorityLookup.find(f->second->m_priority)->second;
+  priorityList.erase(f->second->m_priorityIt);
+  auto newPriorityIt = priorityList.insert(priorityList.begin(), f->second);
+  f->second->m_priorityIt = newPriorityIt;
+
+  auto& timeoutList = m_timeoutLookup.find(f->second->m_timeout)->second;
+  timeoutList.erase(f->second->m_timeoutIt);
+  auto newTimeoutIt = priorityList.insert(timeoutList.begin(), f->second);
+  f->second->m_timeoutIt = newTimeoutIt;
 
   return &((f->second).get()->m_value);
 };
