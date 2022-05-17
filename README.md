@@ -36,7 +36,5 @@ For each item Priority, Timeout, Hits
 
 
 ## To-Do
-1. Setup debug and build flags
-2. Setup the eviction rules
-3. Setup the gtest
-4. look into memory pool
+1. Setup helper functions to reduce code.
+2. Setup the gtest
