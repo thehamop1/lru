@@ -46,6 +46,7 @@ public:
 
 private:
     void RemoveItem(std::shared_ptr<LRU_VALUE> item);
+    void UpdateList(std::list<std::shared_ptr<LRU_VALUE>>& list, std::list<std::shared_ptr<LRU_VALUE>>::iterator& it, std::shared_ptr<LRU_VALUE> ptr);
     unsigned int m_maxItems;
 
     LRU_COMPONENTS_NAME m_nameLookup;

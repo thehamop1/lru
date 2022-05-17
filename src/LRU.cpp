@@ -37,18 +37,22 @@ CacheData *PriorityExpiryCache::Get(std::string key)
     std::cout << "Did not find the value in the cache!" << std::endl;
     return nullptr;
   }
-  auto& priorityList = m_priorityLookup.find(f->second->m_priority)->second;
-  priorityList.erase(f->second->m_priorityIt);
-  auto newPriorityIt = priorityList.insert(priorityList.begin(), f->second);
-  f->second->m_priorityIt = newPriorityIt;
+  auto ptr = f->second;
 
-  auto& timeoutList = m_timeoutLookup.find(f->second->m_timeout)->second;
-  timeoutList.erase(f->second->m_timeoutIt);
-  auto newTimeoutIt = priorityList.insert(timeoutList.begin(), f->second);
-  f->second->m_timeoutIt = newTimeoutIt;
+  auto& timeoutList = m_timeoutLookup.find(ptr->m_timeout)->second;
+  UpdateList(timeoutList, ptr->m_timeoutIt, ptr);
+
+  auto& priorityList = m_priorityLookup.find(ptr->m_priority)->second;
+  UpdateList(priorityList, ptr->m_priorityIt, ptr);
 
   return &((f->second).get()->m_value);
 };
+
+void PriorityExpiryCache::UpdateList(std::list<std::shared_ptr<LRU_VALUE>>& list, std::list<std::shared_ptr<LRU_VALUE>>::iterator& it, std::shared_ptr<LRU_VALUE> ptr){
+  list.erase(it);
+  auto newPriorityIt = list.insert(list.begin(), ptr);
+  it = newPriorityIt;
+}
 
 /**
  * @brief Inserts a new data item into the cache
