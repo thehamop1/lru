@@ -36,5 +36,5 @@ For each item Priority, Timeout, Hits
 
 
 ## To-Do
-1. Setup helper functions to reduce code.
+1. Document the left over functions
 2. Setup the gtest
