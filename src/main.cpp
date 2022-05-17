@@ -1,7 +1,6 @@
 #include "LRU.hpp"
 
 int main() {
-
   PriorityExpiryCache c(5);
   // Name, value, priority, seconds
   c.Set("A", 1, 5,  100 );
