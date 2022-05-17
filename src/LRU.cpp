@@ -78,7 +78,7 @@ void PriorityExpiryCache::AddToMap(std::map<int, std::list<std::shared_ptr<LRU_V
   auto category = map.find(key);
   if (category == map.end())
   {
-    // theres no current priority category for this type
+    // theres no current category for this type
     // list is empty in this case
     auto mapIt = map.insert({key, std::list<std::shared_ptr<LRU_VALUE>>()}).first;
     auto listIt = mapIt->second.insert(mapIt->second.begin(), ptr);
@@ -116,7 +116,7 @@ void PriorityExpiryCache::DebugPrintKeys()
 };
 
 /**
- * @brief Remove items from the LRU based on priority, timeout, and last accessed
+ * @brief Remove items from the LRU based on timeout, priority, and last accessed
  */
 void PriorityExpiryCache::EvictItems()
 {
