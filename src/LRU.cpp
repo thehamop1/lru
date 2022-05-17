@@ -67,38 +67,31 @@ void PriorityExpiryCache::Set(std::string key, CacheData value, int priority, in
   std::shared_ptr<LRU_VALUE> lruValue = std::make_shared<LRU_VALUE>(key, value, priority, expiryInSecs);
   m_nameLookup.insert({key, lruValue});
 
-  auto priorityCategory = m_priorityLookup.find(lruValue->m_priority);
-  if (priorityCategory == m_priorityLookup.end())
-  {
-    // theres no current priority category for this type
-    // list is empty in this case
-    auto priorityIt = m_priorityLookup.insert({lruValue->m_priority, std::list<std::shared_ptr<LRU_VALUE>>()}).first;
-    auto listIt = priorityIt->second.insert(priorityIt->second.begin(), lruValue);
-    lruValue->m_priorityIt = listIt;
-  }
-  else
-  {
-    // list is not empty here
-    auto listIt = priorityCategory->second.insert(priorityCategory->second.begin(), lruValue);
-    lruValue->m_priorityIt = listIt;
-  }
+  AddToMap(m_priorityLookup, lruValue->m_priorityIt, lruValue, lruValue->m_priority);
 
-  auto timeoutCategory = m_timeoutLookup.find(lruValue->m_timeout);
-  if (timeoutCategory == m_timeoutLookup.end())
-  {
-    auto timeoutIt = m_timeoutLookup.insert({lruValue->m_timeout, std::list<std::shared_ptr<LRU_VALUE>>()}).first;
-    auto listIt = timeoutIt->second.insert(timeoutIt->second.begin(), lruValue);
-    lruValue->m_timeoutIt = listIt;
-  }
-  else
-  {
-    // list is not empty here
-    auto listIt = timeoutCategory->second.insert(priorityCategory->second.begin(), lruValue);
-    lruValue->m_priorityIt = listIt;
-  }
+  AddToMap(m_timeoutLookup, lruValue->m_timeoutIt, lruValue, lruValue->m_timeout);
 
   EvictItems();
 };
+
+void PriorityExpiryCache::AddToMap(std::map<int, std::list<std::shared_ptr<LRU_VALUE>>>& map,  std::list<std::shared_ptr<LRU_VALUE>>::iterator& it, std::shared_ptr<LRU_VALUE> ptr, int key){
+  auto category = map.find(key);
+  if (category == map.end())
+  {
+    // theres no current priority category for this type
+    // list is empty in this case
+    auto mapIt = map.insert({key, std::list<std::shared_ptr<LRU_VALUE>>()}).first;
+    auto listIt = mapIt->second.insert(mapIt->second.begin(), ptr);
+    it = listIt;
+  }
+  else
+  {
+    // list is not empty here
+    auto listIt = category->second.insert(category->second.begin(), ptr);
+    it = listIt;
+  }
+};
+
 
 /**
  * @brief Sets the size of the cache and evicts items if the size is set smaller
