@@ -1,7 +1,6 @@
 #include <iostream>
-#include <chrono>
-#include <thread>
 #include <unordered_map>
+#include <map>
 #include <list>
 #include <memory>
 #include <atomic>
@@ -28,8 +27,8 @@ struct LRU_VALUE
 };
 
 typedef std::unordered_map<std::string, std::shared_ptr<LRU_VALUE>> LRU_COMPONENTS_NAME;
-typedef std::unordered_map<int, std::list<std::shared_ptr<LRU_VALUE>>> LRU_COMPONENTS_PRIORITY;
-typedef std::unordered_map<int, std::list<std::shared_ptr<LRU_VALUE>>> LRU_COMPONENTS_TIMEOUT;
+typedef std::map<int, std::list<std::shared_ptr<LRU_VALUE>>> LRU_COMPONENTS_PRIORITY;
+typedef std::map<int, std::list<std::shared_ptr<LRU_VALUE>>> LRU_COMPONENTS_TIMEOUT;
 
 class PriorityExpiryCache
 { // I'm going to make this a class so we can add scope
@@ -43,6 +42,7 @@ public:
     void EvictItems();
 
 private:
+    void RemoveItem(std::shared_ptr<LRU_VALUE> item);
     unsigned int m_maxItems;
 
     LRU_COMPONENTS_NAME m_nameLookup;

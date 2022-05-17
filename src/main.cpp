@@ -9,7 +9,8 @@ int main() {
   c.Set("C", 3, 5,  10  );
   c.Set("D", 4, 1,  15  );
   c.Set("E", 5, 5,  150 );
-  c.Get("C");
+
+  std::cout << "Value at C: " << *(c.Get("C")) << std::endl;//edited line
 
 
   // Current time = 0

@@ -21,8 +21,8 @@ PriorityExpiryCache::PriorityExpiryCache():m_maxItems(0){
 PriorityExpiryCache::PriorityExpiryCache(unsigned int size): m_maxItems(size)
 {
   m_nameLookup.reserve(m_maxItems);//grab memory ahead of time
-  m_priorityLookup.reserve(m_maxItems);
-  m_timeoutLookup.reserve(m_maxItems);
+  // m_priorityLookup.reserve(m_maxItems);
+  // m_timeoutLookup.reserve(m_maxItems);
 };
 
 /**
@@ -102,6 +102,36 @@ void PriorityExpiryCache::DebugPrintKeys() {
  * @brief Remove items from the LRU based on priority, timeout, and last accessed
  */
 void PriorityExpiryCache::EvictItems() {
+  //if we have enough space to hold everything dont evict anything
   if(m_nameLookup.size()<m_maxItems) return;
+
+  //iterate over priority but only check the back
+
+  LRU_COMPONENTS_TIMEOUT::reverse_iterator timeoutRiter = m_timeoutLookup.rbegin();
+  while(m_nameLookup.size()>m_maxItems){//while the cache is too big
+    while(timeoutRiter!=m_timeoutLookup.rend()){
+      if(timeoutRiter->second.back()->m_timeout > g_Time){
+        break;//start evicting by priority
+      }else{
+        
+      } 
+      timeoutRiter++;
+    }
+
+
+
+
+  }
+
+
+  // for(auto& it : m_timeoutLookup){
+  //   std::cout << "First: " << it.first << "\tTimeout: " << it.second.back()->m_timeout << std::endl;
+  //   // auto& last accessed = it.second.back();
+  //   // if(g_Time>it)
+  // }
+
+};
+
+void PriorityExpiryCache::RemoveItem(std::shared_ptr<LRU_VALUE> item) {
 
 };
