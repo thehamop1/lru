@@ -127,33 +127,25 @@ void PriorityExpiryCache::EvictItems()
   if (m_nameLookup.size() <= m_maxItems)
     return;
 
-  // iterate over priority but only check the back
+  // iterate over timeout
+  while(m_nameLookup.size()>m_maxItems){
 
-  LRU_COMPONENTS_TIMEOUT::iterator timeoutIter = m_timeoutLookup.begin();
-  while (timeoutIter != m_timeoutLookup.end() && m_nameLookup.size() > m_maxItems)
-  {
-    std::cout << "List ID: " << timeoutIter->first << "SIZE OF LIST: " << timeoutIter->second.size() << std::endl;
-    if (timeoutIter->second.back()->m_timeout > g_Time)
-    {
-      break; // start evicting by priority
-    }
-    else
-    {
-      std::cout << "removing an item" << std::endl;
-      RemoveItem(timeoutIter->second.back());
-    }
-    timeoutIter++;
+    auto firstToExpire = m_timeoutLookup.begin();
+    if (firstToExpire->first > g_Time || firstToExpire==m_timeoutLookup.end()) break;
+
+    auto& list = firstToExpire->second;
+    RemoveItem(list.back());
   }
 
-  LRU_COMPONENTS_PRIORITY::iterator priorityIter = m_priorityLookup.begin();
-  while (priorityIter != m_priorityLookup.end() && m_nameLookup.size() > m_maxItems)
-  {
-    std::cout << "List ID: " << priorityIter->first << "SIZE OF LIST: " << priorityIter->second.size() << std::endl;
-    std::cout << "removing an item" << std::endl;
-    RemoveItem(priorityIter->second.back());
-    priorityIter++;
-  }
+  // iterate over priority
+  while(m_nameLookup.size()>m_maxItems){
 
+    auto lowestPriority = m_priorityLookup.begin();
+    if (lowestPriority==m_priorityLookup.end()) break;
+
+    auto& list = lowestPriority->second;
+    RemoveItem(list.back());
+  }
 };
 
 /**
