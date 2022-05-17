@@ -45,7 +45,7 @@ CacheData *PriorityExpiryCache::Get(std::string key)
   auto& priorityList = m_priorityLookup.find(ptr->m_priority)->second;
   UpdateList(priorityList, ptr->m_priorityIt, ptr);
 
-  return &((f->second).get()->m_value);
+  return &(ptr->m_value);
 };
 
 void PriorityExpiryCache::UpdateList(std::list<std::shared_ptr<LRU_VALUE>>& list, std::list<std::shared_ptr<LRU_VALUE>>::iterator& it, std::shared_ptr<LRU_VALUE> ptr){
