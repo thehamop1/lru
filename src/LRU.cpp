@@ -22,12 +22,11 @@ PriorityExpiryCache::PriorityExpiryCache() : m_maxItems(0){};
 PriorityExpiryCache::PriorityExpiryCache(unsigned int size) : m_maxItems(size)
 {
   m_nameLookup.reserve(m_maxItems); // grab memory ahead of time
-  // m_priorityLookup.reserve(m_maxItems);
-  // m_timeoutLookup.reserve(m_maxItems);
 };
 
 /**
- * @brief Gets a pointer to a particular value in the lru cache
+ * @brief Gets a pointer to a particular value in the lru cache and also updates
+ * the list in order to account for least recently used.
  * @param key The name of the value we're accessing
  */
 CacheData *PriorityExpiryCache::Get(std::string key)
@@ -130,7 +129,6 @@ void PriorityExpiryCache::EvictItems()
 
   // iterate over priority but only check the back
 
-  // while(m_nameLookup.size()>m_maxItems){//while the cache is too big
   LRU_COMPONENTS_TIMEOUT::iterator timeoutIter = m_timeoutLookup.begin();
   while (timeoutIter != m_timeoutLookup.end() && m_nameLookup.size() > m_maxItems)
   {
@@ -156,9 +154,13 @@ void PriorityExpiryCache::EvictItems()
     priorityIter++;
   }
 
-  // }
 };
 
+/**
+ * @brief Remove items from the LRU data structures and also cleans up
+ * empty lists in the map
+ * @param item A shared pointer to the value to be removed from the cache
+ */
 void PriorityExpiryCache::RemoveItem(std::shared_ptr<LRU_VALUE> item)
 {
   int priority = item->m_priority;
