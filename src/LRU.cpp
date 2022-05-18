@@ -26,38 +26,38 @@ PriorityExpiryCache::PriorityExpiryCache(int size)
 
 /**
  * @brief Gets a pointer to a particular value in the lru cache and also updates
- * the list in order to account for least recently used.
+ * the lists in order to account for least recently used.
  * @param key The name of the value we're accessing
  */
 CacheData *PriorityExpiryCache::Get(std::string key)
 {
-  auto f = m_nameLookup.find(key);
-  if (f == m_nameLookup.end())
+  auto mapIterator = m_nameLookup.find(key);
+  if (mapIterator == m_nameLookup.end())
   {
     std::cout << "Did not find the value in the cache!" << std::endl;
     return nullptr;
   }
-  auto ptr = f->second;
+  auto lruElement = mapIterator->second;
 
-  auto &timeoutList = m_timeoutLookup.find(ptr->m_timeout)->second;
-  UpdateList(timeoutList, ptr->m_timeoutIt, ptr);
+  auto &timeoutList = m_timeoutLookup.find(lruElement->m_timeout)->second;
+  UpdateList(timeoutList, lruElement->m_timeoutIt, lruElement);
 
-  auto &priorityList = m_priorityLookup.find(ptr->m_priority)->second;
-  UpdateList(priorityList, ptr->m_priorityIt, ptr);
+  auto &priorityList = m_priorityLookup.find(lruElement->m_priority)->second;
+  UpdateList(priorityList, lruElement->m_priorityIt, lruElement);
 
-  return &(ptr->m_value);
+  return &(lruElement->m_value);
 };
 
 /**
  * @brief Updates a list based on access
  * @param list The list we're updating
  * @param it The lru value iterator we need to set
- * @param ptr The lru value
+ * @param elem The lru element
  */
-void PriorityExpiryCache::UpdateList(std::list<std::shared_ptr<LRU_VALUE>> &list, std::list<std::shared_ptr<LRU_VALUE>>::iterator &it, std::shared_ptr<LRU_VALUE> ptr)
+void PriorityExpiryCache::UpdateList(std::list<std::shared_ptr<LRU_VALUE>> &list, std::list<std::shared_ptr<LRU_VALUE>>::iterator &it, std::shared_ptr<LRU_VALUE> elem)
 {
   list.erase(it);
-  auto newPriorityIt = list.insert(list.begin(), ptr);
+  auto newPriorityIt = list.insert(list.begin(), elem);
   it = newPriorityIt;
 }
 
