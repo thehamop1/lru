@@ -1,4 +1,3 @@
-
 #include <iostream>
 #include <chrono>
 #include <thread>
@@ -19,9 +18,8 @@ PriorityExpiryCache::PriorityExpiryCache() : m_maxItems(0){};
  * @brief Constructor used to reserve data on construction
  * @param size The initial size of the LRU cache
  */
-PriorityExpiryCache::PriorityExpiryCache(unsigned int size)
+PriorityExpiryCache::PriorityExpiryCache(int size)
 {
-  
   m_maxItems = (size<0) ? 0 : size; // If we get a negative set it to 0
   m_nameLookup.reserve(m_maxItems); // grab memory ahead of time
 };
@@ -70,8 +68,12 @@ void PriorityExpiryCache::UpdateList(std::list<std::shared_ptr<LRU_VALUE>> &list
  * @param priority Priority of this data block
  * @param expiryInSecs The timeout for a particular variable to be considered stale
  */
-void PriorityExpiryCache::Set(std::string key, CacheData value, int priority, int expiryInSecs)
+int PriorityExpiryCache::Set(std::string key, CacheData value, int priority, int expiryInSecs)
 {
+
+  //Check if value exists and if it does reject
+  if(m_nameLookup.find(key)!=m_nameLookup.end()) return -1;
+
   // Assume that this will add this key, value pair to the cache
   std::shared_ptr<LRU_VALUE> lruValue = std::make_shared<LRU_VALUE>(key, value, priority, expiryInSecs);
   m_nameLookup.insert({key, lruValue});
@@ -81,6 +83,8 @@ void PriorityExpiryCache::Set(std::string key, CacheData value, int priority, in
   AddToMap(m_timeoutLookup, lruValue->m_timeoutIt, lruValue, lruValue->m_timeout);
 
   EvictItems();
+
+  return 0;
 };
 
 /**
@@ -144,7 +148,6 @@ void PriorityExpiryCache::EvictItems()
   // iterate over timeout
   while (m_nameLookup.size() > m_maxItems)
   {
-
     auto firstToExpire = m_timeoutLookup.begin();
     if (firstToExpire->first > g_Time || firstToExpire == m_timeoutLookup.end())
       break;
@@ -156,7 +159,6 @@ void PriorityExpiryCache::EvictItems()
   // iterate over priority
   while (m_nameLookup.size() > m_maxItems)
   {
-
     auto lowestPriority = m_priorityLookup.begin();
     if (lowestPriority == m_priorityLookup.end())
       break;

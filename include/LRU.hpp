@@ -32,9 +32,9 @@ class PriorityExpiryCache
 { // I'm going to make this a class so we can add scope
 public:
     PriorityExpiryCache();
-    PriorityExpiryCache(unsigned int size);
+    PriorityExpiryCache(int size);
     CacheData *Get(std::string key);
-    void Set(std::string key, CacheData value, int priority, int expiryInSecs);
+    int Set(std::string key, CacheData value, int priority, int expiryInSecs);
     void SetMaxItems(int numItems);
     void DebugPrintKeys();
     void EvictItems();
