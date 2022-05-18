@@ -63,8 +63,8 @@ void PriorityExpiryCache::UpdateList(std::list<std::shared_ptr<LRU_VALUE>> &list
 /**
  * @brief Inserts a new data item into the cache
  * @param key The name of the value we're storing
- * @param value The actually value of the item
- * @param priority Priority of this data block
+ * @param value The actual value of the item
+ * @param priority Priority of this lru element
  * @param expiryInSecs The timeout for a particular variable to be considered stale
  */
 int PriorityExpiryCache::Set(std::string key, CacheData value, int priority, int expiryInSecs)
@@ -87,9 +87,9 @@ int PriorityExpiryCache::Set(std::string key, CacheData value, int priority, int
 };
 
 /**
- * @brief Adds a new value to the cache if no category exists for its map then creates a list. Otherwise
+ * @brief Adds a new value to the cache if no category exists for its map then it will create a list. Otherwise
  * prepend to the existing list.
- * @param map The map to add the value to
+ * @param map The map to add the value
  * @param it The corresponsing iterator for the list in the maps value
  * @param ptr A pointer to the lru value
  * @param key The value of the category (can be priority or timeout epoch)
@@ -115,7 +115,7 @@ void PriorityExpiryCache::AddToMap(std::map<int, std::list<std::shared_ptr<LRU_V
 
 /**
  * @brief Sets the size of the cache and evicts items if the size is set smaller
- * @param numItems The size to set the cache to
+ * @param numItems The size to set the cache
  */
 void PriorityExpiryCache::SetMaxItems(int numItems)
 {
@@ -136,7 +136,7 @@ void PriorityExpiryCache::DebugPrintKeys()
 };
 
 /**
- * @brief Remove items from the LRU based on timeout, priority, and last accessed
+ * @brief Remove items from the LRU based on timeout, priority, and least accessed
  */
 void PriorityExpiryCache::EvictItems()
 {

@@ -33,8 +33,3 @@ For each item Priority, Timeout, Hits
 1. Timeout
 2. if priority
 3. use hits
-
-
-## To-Do
-1. Document the left over functions
-2. Setup the gtest
