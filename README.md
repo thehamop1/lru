@@ -2,7 +2,7 @@
 ## How to Build
 - Dependencies:
   - CMake 3.18 or Newer
-  - GCC 10 or newer
+  - GCC 10 or newer (tested with 10 and 12)
   - Google Test
 
 - Instructions:
