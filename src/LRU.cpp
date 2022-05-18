@@ -10,13 +10,13 @@
 /**
  * @brief Default constructor with size 0 cache
  */
-PriorityExpiryCache::PriorityExpiryCache() : m_maxItems(0){};
+PriorityExpiryCache::PriorityExpiryCache() :g_Time(0), m_maxItems(0){};
 
 /**
  * @brief Constructor used to reserve data on construction
  * @param size The initial size of the LRU cache
  */
-PriorityExpiryCache::PriorityExpiryCache(int size)
+PriorityExpiryCache::PriorityExpiryCache(int size):g_Time(0)
 {
   m_maxItems = (size<0) ? 0 : size; // If we get a negative set it to 0
   m_nameLookup.reserve(m_maxItems); // grab memory ahead of time
@@ -35,6 +35,7 @@ CacheData *PriorityExpiryCache::Get(std::string key)
     std::cout << "Did not find the value in the cache!" << std::endl;
     return nullptr;
   }
+  
   auto lruElement = mapIterator->second;
 
   auto &timeoutList = m_timeoutLookup.find(lruElement->m_timeout)->second;
@@ -147,8 +148,9 @@ void PriorityExpiryCache::EvictItems()
   while (m_nameLookup.size() > m_maxItems)
   {
     auto firstToExpire = m_timeoutLookup.begin();
-    if (firstToExpire->first > g_Time || firstToExpire == m_timeoutLookup.end())
+    if (firstToExpire->first > g_Time || firstToExpire == m_timeoutLookup.end()){
       break;
+    }
 
     auto &list = firstToExpire->second;
     RemoveItem(list.back());
@@ -158,8 +160,9 @@ void PriorityExpiryCache::EvictItems()
   while (m_nameLookup.size() > m_maxItems)
   {
     auto lowestPriority = m_priorityLookup.begin();
-    if (lowestPriority == m_priorityLookup.end())
+    if (lowestPriority == m_priorityLookup.end()){
       break;
+    }
 
     auto &list = lowestPriority->second;
     RemoveItem(list.back());
@@ -183,8 +186,10 @@ void PriorityExpiryCache::RemoveItem(std::shared_ptr<LRU_VALUE> item)
   priorityIt->second.erase(item->m_priorityIt);
   timeoutIt->second.erase(item->m_timeoutIt);
 
-  if (priorityIt->second.empty())
+  if (priorityIt->second.empty()){
     m_priorityLookup.erase(priorityIt);
-  if (timeoutIt->second.empty())
+  }
+  if (timeoutIt->second.empty()){
     m_timeoutLookup.erase(timeoutIt);
+  }
 };

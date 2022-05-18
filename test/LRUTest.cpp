@@ -163,9 +163,9 @@ TEST(LRU_CACHE, CheckValuesInCache) {
   ASSERT_EQ(val, nullptr);
 }
 
-
+//D is not inserted into the cache
+//since it is a lower priority than A,B,C
 TEST(LRU_CACHE, EvictNewItem) {
-  CacheData* val=nullptr;
   PriorityExpiryCache c(3);
   ASSERT_EQ(c.MaxSizeCache(), 3);
 
@@ -180,8 +180,8 @@ TEST(LRU_CACHE, EvictNewItem) {
 
   c.Set("D", 1, 1, 100);
   ASSERT_EQ(c.SizeOfCache(), 3);
-  val=c.Get("D");
 
-  ASSERT_NE(val, nullptr);
-  ASSERT_EQ(*val, 1);
+  c.DebugPrintKeys();
+  CacheData* val=c.Get("D");
+  ASSERT_EQ(val, nullptr);
 }
