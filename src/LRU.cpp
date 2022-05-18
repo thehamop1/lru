@@ -19,8 +19,10 @@ PriorityExpiryCache::PriorityExpiryCache() : m_maxItems(0){};
  * @brief Constructor used to reserve data on construction
  * @param size The initial size of the LRU cache
  */
-PriorityExpiryCache::PriorityExpiryCache(unsigned int size) : m_maxItems(size)
+PriorityExpiryCache::PriorityExpiryCache(unsigned int size)
 {
+  
+  m_maxItems = (size<0) ? 0 : size; // If we get a negative set it to 0
   m_nameLookup.reserve(m_maxItems); // grab memory ahead of time
 };
 
@@ -114,7 +116,7 @@ void PriorityExpiryCache::AddToMap(std::map<int, std::list<std::shared_ptr<LRU_V
  */
 void PriorityExpiryCache::SetMaxItems(int numItems)
 {
-  m_maxItems = numItems;
+  m_maxItems = (numItems<0) ? 0 : numItems;
   EvictItems();
 };
 

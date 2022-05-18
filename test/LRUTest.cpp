@@ -9,7 +9,24 @@ TEST(LRU_CACHE, AddToZeroCache) {
 
   c.Set("A", 1, 5, 100);
   ASSERT_EQ(c.SizeOfCache(), 0);
-  c.Set("B", 1, 5, 100);
-  c.Set("C", 1, 5, 100);
 
+  c.Set("B", 1, 5, 100);
+  ASSERT_EQ(c.SizeOfCache(), 0);
+
+  c.Set("C", 1, 5, 100);
+  ASSERT_EQ(c.SizeOfCache(), 0);
 };
+
+TEST(LRU_CACHE, NegativeSizedCache) {
+  PriorityExpiryCache c(-5);
+  ASSERT_EQ(c.MaxSizeCache(), 0);
+
+  c.Set("A", 1, 5, 100);
+  ASSERT_EQ(c.SizeOfCache(), 0);
+
+  c.Set("B", 1, 5, 100);
+  ASSERT_EQ(c.SizeOfCache(), 0);
+
+  c.Set("C", 1, 5, 100);
+  ASSERT_EQ(c.SizeOfCache(), 0);
+}

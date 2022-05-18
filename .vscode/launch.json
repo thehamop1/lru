@@ -2,10 +2,31 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "LRU Test",
+            "name": "LRU Main",
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/build/bin/MAIN",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${fileDirname}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            "preLaunchTask": "build",
+            "miDebuggerPath": "/usr/bin/gdb"
+        },
+        {
+            "name": "LRU GTest",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/bin/LRUTEST",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${fileDirname}",
