@@ -38,6 +38,8 @@ public:
     void SetMaxItems(int numItems);
     void DebugPrintKeys();
     void EvictItems();
+    int MaxSizeCache(){return m_maxItems;};
+    int SizeOfCache(){return m_nameLookup.size();};
 
     static int g_Time; // this is like a global timer
 

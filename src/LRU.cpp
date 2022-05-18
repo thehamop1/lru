@@ -82,8 +82,8 @@ void PriorityExpiryCache::Set(std::string key, CacheData value, int priority, in
 };
 
 /**
- * @brief Adds a new value to the cache if no category for its map is created then create a list. Otherwise
- * prepend to the list
+ * @brief Adds a new value to the cache if no category exists for its map then creates a list. Otherwise
+ * prepend to the existing list.
  * @param map The map to add the value to
  * @param it The corresponsing iterator for the list in the maps value
  * @param ptr A pointer to the lru value
