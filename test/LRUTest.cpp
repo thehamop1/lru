@@ -77,6 +77,54 @@ TEST(LRU_CACHE, EvictionToZero) {
   ASSERT_EQ(val, nullptr);
 }
 
+TEST(LRU_CACHE, CheckTimeout) {
+  CacheData* val=nullptr;
+  PriorityExpiryCache c(3);
+  ASSERT_EQ(c.MaxSizeCache(), 3);
+
+  c.Set("A", 1, 5, 1);
+  ASSERT_EQ(c.SizeOfCache(), 1);
+
+  c.Set("B", -9, 5, 2);
+  ASSERT_EQ(c.SizeOfCache(), 2);
+
+  c.Set("C", 4, 5, 3);
+  ASSERT_EQ(c.SizeOfCache(), 3);
+
+  c.g_Time += 1;
+  c.SetMaxItems(2);
+  ASSERT_EQ(c.SizeOfCache(), 2);
+
+  val=c.Get("A");
+  ASSERT_EQ(val, nullptr);
+  val=c.Get("B");
+  ASSERT_EQ(*val, -9);
+  val=c.Get("C");
+  ASSERT_EQ(*val, 4);
+
+  c.g_Time += 1;
+  c.SetMaxItems(1);
+  ASSERT_EQ(c.SizeOfCache(), 1);
+
+  val=c.Get("A");
+  ASSERT_EQ(val, nullptr);
+  val=c.Get("B");
+  ASSERT_EQ(val, nullptr);
+  val=c.Get("C");
+  ASSERT_EQ(*val, 4);
+
+  c.g_Time += 1;
+  c.SetMaxItems(0);
+  ASSERT_EQ(c.SizeOfCache(), 0);
+
+  val=c.Get("A");
+  ASSERT_EQ(val, nullptr);
+  val=c.Get("B");
+  ASSERT_EQ(val, nullptr);
+  val=c.Get("C");
+  ASSERT_EQ(val, nullptr);
+}
+
 TEST(LRU_CACHE, CheckValuesInCache) {
   CacheData* val=nullptr;
   PriorityExpiryCache c(3);
@@ -113,4 +161,27 @@ TEST(LRU_CACHE, CheckValuesInCache) {
 
   val = c.Get("C");
   ASSERT_EQ(val, nullptr);
+}
+
+
+TEST(LRU_CACHE, EvictNewItem) {
+  CacheData* val=nullptr;
+  PriorityExpiryCache c(3);
+  ASSERT_EQ(c.MaxSizeCache(), 3);
+
+  c.Set("A", 10, 100, 100);
+  ASSERT_EQ(c.SizeOfCache(), 1);
+
+  c.Set("B", 10, 100, 100);
+  ASSERT_EQ(c.SizeOfCache(), 2);
+
+  c.Set("C", 10, 100, 100);
+  ASSERT_EQ(c.SizeOfCache(), 3);
+
+  c.Set("D", 1, 1, 100);
+  ASSERT_EQ(c.SizeOfCache(), 3);
+  val=c.Get("D");
+
+  ASSERT_NE(val, nullptr);
+  ASSERT_EQ(*val, 1);
 }

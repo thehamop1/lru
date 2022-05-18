@@ -41,7 +41,7 @@ public:
     int MaxSizeCache(){return m_maxItems;};
     int SizeOfCache(){return m_nameLookup.size();};
 
-    static int g_Time; // this is like a global timer
+    int g_Time; // Changing this away from global for testing
 
 private:
     void RemoveItem(std::shared_ptr<LRU_VALUE> item);

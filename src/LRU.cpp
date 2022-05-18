@@ -7,8 +7,6 @@
 
 #include "LRU.hpp"
 
-int PriorityExpiryCache::g_Time = 0; // this is like a global timer
-
 /**
  * @brief Default constructor with size 0 cache
  */

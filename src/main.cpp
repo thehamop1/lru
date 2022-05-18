@@ -19,7 +19,7 @@ int main()
   c.DebugPrintKeys();
 
   // Sleep for 5 secs
-  PriorityExpiryCache::g_Time += 5;
+  c.g_Time += 5;
 
   // Current time = 5
   c.SetMaxItems(4);
